@@ -1,0 +1,13 @@
+[package]
+name = "cairo-xcb"
+version = "0.1.0"
+authors = ["Dmitry Kurbatov <dk@dimcha.ru>"]
+
+[dependencies]
+cairo-rs = { git = "https://github.com/kandeshvari/cairo.git", rev = "f436841" }
+cairo-sys-rs = { git = "https://github.com/kandeshvari/cairo.git", rev = "f436841" }
+libc = "0.2"
+xcb = { git = "https://github.com/kandeshvari/rust-xcb.git", rev = "05a4716" }
+
+[lib]
+name = "cairo_xcb"
