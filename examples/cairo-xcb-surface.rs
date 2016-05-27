@@ -3,12 +3,14 @@ extern crate cairo;
 extern crate cairo_sys;
 extern crate cairo_xcb;
 extern crate libc;
+// extern crate glib;
 
 use cairo::Surface;
 use cairo::prelude::SurfaceExt;
 use xcb::ffi::xproto::xcb_visualid_t;
 use xcb::Visualtype;
 use cairo_xcb::xcb_surface_create;
+use cairo_sys::{cairo_surface_t};
 
 fn find_visual<'a>(conn: &'a xcb::Connection, visual: xcb_visualid_t) -> Option<Visualtype<'a>> {
     for screen in conn.get_setup().roots() {
@@ -22,6 +24,9 @@ fn find_visual<'a>(conn: &'a xcb::Connection, visual: xcb_visualid_t) -> Option<
     }
     None
 }
+
+#[derive(Debug)]
+pub struct SurfacePub(pub *mut cairo_surface_t);
 
 fn main() {
     let (conn, screen_num) = xcb::Connection::connect(None).unwrap();
@@ -56,7 +61,7 @@ fn main() {
     // inject cairo here
     let visual = find_visual(&conn, screen.root_visual()).unwrap();
     let csurface = xcb_surface_create(&conn, window, &visual, 150, 150);
-    let surface = Surface(csurface);
+    let surface = unsafe {&*((&SurfacePub(csurface) as *const SurfacePub) as *const Surface)};
     let cr = cairo::Context::new(&surface);
 
     conn.flush();
